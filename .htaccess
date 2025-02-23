@@ -1,0 +1,7 @@
+RewriteEngine On
+RewriteCond %{SCRIPT_FILENAME} !-d
+RewriteCond %{SCRIPT_FILENAME} !-f
+RewriteRule ^(.*?)$ ?screen=$1 [QSA]
+DirectoryIndex index.php
+
+php_value session.cookie_httponly 1
