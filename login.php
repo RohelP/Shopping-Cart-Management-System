@@ -29,7 +29,7 @@
 	}
 
 ?>
-<h1>Login</h1>
+<h1>Testing</h1>
 <form method="post" id="login">
 	<label for="user">USERNAME</label><br />
 	<input type="text" name="user" /><br />
