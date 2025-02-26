@@ -1,80 +1,63 @@
+<?php
+	session_start();
+
+	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+		require_once('./db.php');
+	
+		$db = getDB();
+		$user = $_POST['user'];
+		$pass = $_POST['pass'];
+
+		$u_stmt = $db->prepare("SELECT id FROM users WHERE username = ? AND password = ?");
+		$u_stmt->bind_param("ss", $user, $pass);
+		$u_stmt->execute();
+		$u_stmt->bind_result($id);
+		if ($u_stmt->fetch()) {
+			$_SESSION['uid'] = $id;
+			header("Location: home.php", true, 303);
+			exit;
+		} else {
+			$_SESSION['error'] = "Invalid Username or Password.";
+		}
+		$u_stmt->close();
+	}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Login</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 300px;
-        }
-        h1 {
-            margin-bottom: 20px;
-        }
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        input[type="submit"] {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 10px;
-            width: 100%;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        input[type="submit"]:hover {
-            background: #218838;
-        }
-        .register-link {
-            display: block;
-            margin-top: 10px;
-            color: #007bff;
-            text-decoration: none;
-        }
-        .register-link:hover {
-            text-decoration: underline;
-        }
-        .error {
-            color: red;
-        }
-    </style>
+    <title>Login - Shopping Cart</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
     <div class="container">
-        <h1>Login</h1>
-        <?php
-            if (@$_SESSION['error']) {
-                echo "<p class='error'>{$_SESSION['error']}</p>";
-                unset($_SESSION['error']);
-            }
-        ?>
-        <form method="post" id="login">
-            <label for="user">Username</label>
-            <input type="text" name="user" required />
-            <label for="pass">Password</label>
-            <input type="password" name="pass" required />
-            <input type="submit" value="Login" />
-        </form>
-        <a class="register-link" href="<?php echo PROJECT_ROOT; ?>register">Register</a>
+        <div class="login-box">
+            <h2>User Login</h2>
+            
+            <?php if (!empty($_SESSION['error'])): ?>
+                <p class="error-message"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></p>
+            <?php endif; ?>
+            
+            <form method="post">
+                <div class="input-group">
+                    <label for="user">Username</label>
+                    <input type="text" name="user" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="pass">Password</label>
+                    <input type="password" name="pass" required>
+                </div>
+
+                <button type="submit" class="login-btn">Login</button>
+
+                <p class="register-link">Don't have an account? <a href="register.php">Register here</a></p>
+            </form>
+        </div>
     </div>
+
 </body>
 </html>
